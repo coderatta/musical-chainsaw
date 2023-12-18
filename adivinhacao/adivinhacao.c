@@ -37,7 +37,7 @@ int selecao_dificuldade(void)
 
 int subtrai_pontos(int chute, int numero_secreto)
 {
-    return abs((chute - numero_secreto) / 2.0);
+    return (abs(chute - numero_secreto) / 2.0);
 }
 
 void verifica_chute(int chances)
@@ -47,7 +47,6 @@ void verifica_chute(int chances)
     int acertou = 0;
     int chute;
     int pontos = 1000;
-    printf("%d", numero_secreto);
 
     while (!acertou && chances > 0)
     {

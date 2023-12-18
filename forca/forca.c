@@ -1,71 +1,52 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <ctype.h>
 
-int ganhou()
+int main()
 {
-    return 0;
-}
 
-int enforcou()
-{
-    return 0;
-}
+    char palavrasecreta[20];
+    sprintf(palavrasecreta, "MELANCIA");
 
-/*
-int sorteia_palavra()
-{
-    int quantidade_de_palavras = sizeof(palavras) / sizeof(palavras[0]);
-    srand(time(NULL));
-    int indice_da_palavra = rand() % quantidade_de_palavras;
-    return palavras[indice_da_palavra];
-}
- */
+    int acertou = 0;
+    int enforcou = 0;
 
-int main(void)
-{
-    char palavra_secreta[20];
-    sprintf(palavra_secreta, "LION");
-    char letras_chutadas[26];
+    char chutes[26];
     int tentativas = 0;
 
     do
     {
-        for (size_t i = 0; i < strlen(palavra_secreta); i++)
+
+        for (size_t i = 0; i < strlen(palavrasecreta); i++)
         {
-            for (size_t j = 0; j < tentativas; j++)
+            int achou = 0;
+
+            for (int j = 0; j < tentativas; j++)
             {
-                if (palavra_secreta[i] == letras_chutadas[j])
+                if (chutes[j] == palavrasecreta[i])
                 {
-                    printf("%c ", palavra_secreta[i]);
+                    achou = 1;
                     break;
                 }
             }
-            printf("_ ");
-        }
-        printf("\n");
 
-        printf("Chuta aí: ");
-        char chute;
-        scanf(" %c", &chute);
-        letras_chutadas[tentativas] = chute;
-
-        for (size_t i = 0; i < strlen(palavra_secreta); i++)
-        {
-            if (chute == palavra_secreta[i])
+            if (achou)
             {
-                printf("Acertou\n");
-                tentativas--;
+                printf("%c ", palavrasecreta[i]);
             }
             else
             {
-                printf("Errou\n");
-                tentativas++;
+                printf("_ ");
             }
         }
+        printf("\n");
 
-    } while (!ganhou() && !enforcou());
+        char chute;
+        printf("Qual letra? ");
+        scanf(" %c", &chute);
 
-    return 0;
+        chutes[tentativas] = toupper(chute);
+        tentativas++;
+
+    } while (!acertou && !enforcou);
 }
