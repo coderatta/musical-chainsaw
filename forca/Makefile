@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra -g    # Flags for the compiler
+CFLAGS = -Wall -Wextra -g -O0   # Flags for the compiler
 
 # List of source files
 SRCS = forca.c
