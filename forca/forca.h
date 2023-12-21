@@ -1,0 +1,12 @@
+void captura_chute();
+int ja_foi_chutada(int i);
+void imprime_forca();
+void escolhe_palavra();
+int enforcou();
+int acertou();
+void mensagem_final();
+int contar_palavras(FILE *arquivo);
+void ler_palavra(FILE *arquivo, int linha, char *palavra);
+void adiciona_palavra();
+FILE *abrir_arquivo(char *modo);
+void atualiza_numero_de_palavras(FILE *arquivo);

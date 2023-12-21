@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+#include "forca.h"
 
 char palavrasecreta[20];
 char chutes[26];
@@ -15,7 +18,7 @@ void captura_chute()
     total_de_chutes++;
 }
 
-int verifica_se_letra_ja_foi_chutada(int i)
+int ja_foi_chutada(int i)
 {
     int achou = 0;
 
@@ -34,7 +37,7 @@ void imprime_forca()
 {
     for (size_t i = 0; i < strlen(palavrasecreta); i++)
     {
-        int achou = verifica_se_letra_ja_foi_chutada(i);
+        int achou = ja_foi_chutada(i);
 
         if (achou)
         {
@@ -48,16 +51,44 @@ void imprime_forca()
     printf("\n");
 }
 
+int contar_palavras(FILE *arquivo)
+{
+    int quantidade_de_palavras;
+    fscanf(arquivo, "%d", &quantidade_de_palavras);
+    return quantidade_de_palavras;
+}
+
+void ler_palavra(FILE *arquivo, int linha, char *palavrasecreta)
+{
+    for (int i = 0; i <= linha; i++)
+    {
+        if (fscanf(arquivo, "%s", palavrasecreta) != 1)
+        {
+            fprintf(stderr, "Error reading word from file\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 void escolhe_palavra()
 {
-    sprintf(palavrasecreta, "MELANCIA");
+    FILE *arquivo = abrir_arquivo("r");
+
+    int quantidade_de_palavras = contar_palavras(arquivo);
+
+    srand(time(NULL));
+    int linha_do_arquivo = rand() % quantidade_de_palavras;
+
+    ler_palavra(arquivo, linha_do_arquivo, palavrasecreta);
+
+    fclose(arquivo);
 }
 
 int enforcou()
 {
     int erros = 0;
 
-    for (size_t i = 0; i < total_de_chutes; i++)
+    for (int i = 0; i < total_de_chutes; i++)
     {
         int existe = 0;
 
@@ -79,6 +110,70 @@ int enforcou()
 
 int acertou()
 {
+    for (size_t i = 0; i < strlen(palavrasecreta); i++)
+    {
+        if (!ja_foi_chutada(i))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void mensagem_final()
+{
+    if (acertou())
+    {
+        printf("Parabéns! Você ganhou!\n");
+        adiciona_palavra();
+    }
+    else
+    {
+        printf("Você perdeu! A palavra era: %s\n", palavrasecreta);
+    }
+}
+
+void atualiza_numero_de_palavras(FILE *arquivo)
+{
+    int quantidade_de_palavras = contar_palavras(arquivo);
+    quantidade_de_palavras++;
+    fseek(arquivo, 0, SEEK_SET);
+    fprintf(arquivo, "%d\n", quantidade_de_palavras);
+}
+
+FILE *abrir_arquivo(char *modo)
+{
+    FILE *arquivo = fopen("palavras.txt", modo);
+    if (arquivo == NULL)
+    {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+    return arquivo;
+}
+
+void adiciona_palavra()
+{
+    printf("Você que adicionar uma nova palavra: (S/N) ");
+    char opcao;
+    scanf(" %c", &opcao);
+
+    if (toupper(opcao) == 'N')
+    {
+        exit(EXIT_SUCCESS);
+    }
+
+    FILE *arquivo = abrir_arquivo("r+");
+
+    atualiza_numero_de_palavras(arquivo);
+
+    char nova_palavra[20];
+    printf("Digite a nova palavra: ");
+    scanf("%s", nova_palavra);
+    fseek(arquivo, 0, SEEK_END);
+    fprintf(arquivo, "%s\n", nova_palavra);
+
+    fclose(arquivo);
 }
 
 int main()
@@ -91,4 +186,6 @@ int main()
 
         captura_chute();
     } while (!acertou() && !enforcou());
+
+    mensagem_final();
 }
