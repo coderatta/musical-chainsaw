@@ -4,22 +4,22 @@
 
 char palavrasecreta[20];
 char chutes[26];
-int tentativas = 0;
+int total_de_chutes = 0;
 
 void captura_chute()
 {
     char chute;
     printf("Qual letra? ");
     scanf(" %c", &chute);
-    chutes[tentativas] = toupper(chute);
-    tentativas++;
+    chutes[total_de_chutes] = toupper(chute);
+    total_de_chutes++;
 }
 
 int verifica_se_letra_ja_foi_chutada(int i)
 {
     int achou = 0;
 
-    for (int j = 0; j < tentativas; j++)
+    for (int j = 0; j < total_de_chutes; j++)
     {
         if (chutes[j] == palavrasecreta[i])
         {
@@ -53,17 +53,42 @@ void escolhe_palavra()
     sprintf(palavrasecreta, "MELANCIA");
 }
 
+int enforcou()
+{
+    int erros = 0;
+
+    for (size_t i = 0; i < total_de_chutes; i++)
+    {
+        int existe = 0;
+
+        for (size_t j = 0; j < strlen(palavrasecreta); j++)
+        {
+            if (chutes[i] == palavrasecreta[j])
+            {
+                existe = 1;
+                break;
+            }
+        }
+        if (!existe)
+        {
+            erros++;
+        }
+    }
+    return erros >= 5;
+}
+
+int acertou()
+{
+}
+
 int main()
 {
     escolhe_palavra();
-
-    int acertou = 0;
-    int enforcou = 0;
 
     do
     {
         imprime_forca();
 
         captura_chute();
-    } while (!acertou && !enforcou);
+    } while (!acertou() && !enforcou());
 }
