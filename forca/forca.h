@@ -10,3 +10,4 @@ void ler_palavra(FILE *arquivo, int linha, char *palavra);
 void adiciona_palavra();
 FILE *abrir_arquivo(char *modo);
 void atualiza_numero_de_palavras(FILE *arquivo);
+int total_erros();
