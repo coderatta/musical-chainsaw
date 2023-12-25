@@ -1,33 +1,69 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "pacman.h"
 
-int main()
+char **mapa;
+int linhas;
+int colunas;
+
+void libera_memoria()
 {
+    for (int i = 0; i < linhas; i++)
+    {
+        free(mapa[i]);
+    }
+    free(mapa);
+}
 
-    // abre o arquivo e salva as linhas e colunas
+void desenha_mapa()
+{
+    for (int i = 0; i < linhas; i++)
+    {
+        printf("%s\n", mapa[i]);
+    }
+}
+
+void carrega_mapa(FILE *arquivo_mapas)
+{
+    for (int i = 0; i < linhas; i++)
+    {
+        fscanf(arquivo_mapas, "%s", mapa[i]);
+    }
+}
+
+void aloca_memoria()
+{
+    mapa = malloc(sizeof(char *) * linhas); // aloca ponteiros de char(arrays) para as linhas
+    for (int i = 0; i < linhas; i++)
+    {
+        mapa[i] = malloc(sizeof(char) * (colunas + 1)); // aloca memoria para as colunas dentro das linhas
+    }
+}
+
+FILE *abre_arquivo()
+{
     FILE *arquivo_mapas = fopen("mapas.txt", "r");
     if (arquivo_mapas == 0)
     {
         fprintf(stderr, "Erro a leitura do mapa\n");
         exit(EXIT_FAILURE);
     }
-    int linhas;
-    int colunas;
-    fscanf(arquivo_mapas, "%d", &linhas);
-    fscanf(arquivo_mapas, "%d", &colunas);
-    char mapa[linhas][colunas + 1]; // mais 1 por causa do \0 no final da string
+    fscanf(arquivo_mapas, "%d %d", &linhas, &colunas);
+    return arquivo_mapas;
+}
 
-    // salva o mapa na matriz
-    for (int i = 0; i < linhas; i++)
-    {
-        fscanf(arquivo_mapas, "%s", mapa[i]);
-    }
+int main()
+{
 
-    // desenha o mapa
-    for (int i = 0; i < linhas; i++)
-    {
-        printf("%s\n", mapa[i]);
-    }
+    FILE *arquivo_mapas = abre_arquivo();
+
+    aloca_memoria();
+
+    carrega_mapa(arquivo_mapas);
+
+    desenha_mapa();
+
+    libera_memoria();
 
     fclose(arquivo_mapas);
     return 0;
