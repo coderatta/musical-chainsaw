@@ -4,6 +4,7 @@
 #include "mapa.h"
 
 m mapa;
+p player;
 
 void captura_movimento()
 {
@@ -12,57 +13,38 @@ void captura_movimento()
     move_presonagem(comando);
 }
 
-void localiza_personagem(int *x_axis, int *y_axis)
-{
-    for (int i = 0; i < mapa.linhas; i++)
-    {
-        for (int j = 0; j < mapa.colunas; j++)
-        {
-            if (mapa.matriz[i][j] == '@')
-            {
-                *x_axis = j;
-                *y_axis = i;
-                break;
-            }
-        }
-    }
-}
-
 void move_presonagem(char comando)
 {
-    int x_axis;
-    int y_axis;
+    localiza_personagem(&mapa, &player, '@');
 
-    localiza_personagem(&x_axis, &y_axis);
-
-    mapa.matriz[y_axis][x_axis] = '.';
+    mapa.matriz[player.y][player.x] = '.';
 
     switch (comando)
     {
     case 'w':
-        y_axis -= 1;
+        player.y -= 1;
         break;
     case 's':
-        y_axis += 1;
+        player.y += 1;
         break;
     case 'a':
-        x_axis -= 1;
+        player.x -= 1;
         break;
     case 'd':
-        x_axis += 1;
+        player.x += 1;
         break;
     default:
         break;
     }
     // verifica se bateu em uma parede
-    if (mapa.matriz[y_axis][x_axis] == '-' || mapa.matriz[y_axis][x_axis] == '|')
+    if (mapa.matriz[player.y][player.x] == '-' || mapa.matriz[player.y][player.x] == '|')
     {
         printf("You lost\n");
         exit(EXIT_SUCCESS);
     }
     else
     {
-        mapa.matriz[y_axis][x_axis] = '@';
+        mapa.matriz[player.y][player.x] = '@';
     }
 }
 

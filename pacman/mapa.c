@@ -47,3 +47,19 @@ FILE *abre_arquivo(m *mapa)
     fscanf(arquivo_mapas, "%d %d", &(mapa->linhas), &(mapa->colunas));
     return arquivo_mapas;
 }
+
+void localiza_personagem(m *mapa, p *player, char player_symbol)
+{
+    for (int i = 0; i < mapa->linhas; i++)
+    {
+        for (int j = 0; j < mapa->colunas; j++)
+        {
+            if (mapa->matriz[i][j] == player_symbol)
+            {
+                player->x = j;
+                player->y = i;
+                break;
+            }
+        }
+    }
+}
