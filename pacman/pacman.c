@@ -1,54 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "pacman.h"
+#include "mapa.h"
 
-struct mapa mapa1;
-
-void libera_memoria()
-{
-    for (int i = 0; i < mapa1.linhas; i++)
-    {
-        free(mapa1.matriz[i]);
-    }
-    free(mapa1.matriz);
-}
-
-void desenha_mapa()
-{
-    for (int i = 0; i < mapa1.linhas; i++)
-    {
-        printf("%s\n", mapa1.matriz[i]);
-    }
-}
-
-void carrega_mapa(FILE *arquivo_mapas)
-{
-    for (int i = 0; i < mapa1.linhas; i++)
-    {
-        fscanf(arquivo_mapas, "%s", mapa1.matriz[i]);
-    }
-}
-
-void aloca_memoria()
-{
-    mapa1.matriz = malloc(sizeof(char *) * mapa1.linhas); // aloca ponteiros de char(arrays) para as linhas
-    for (int i = 0; i < mapa1.linhas; i++)
-    {
-        mapa1.matriz[i] = malloc(sizeof(char) * (mapa1.colunas + 1)); // aloca memoria para as colunas dentro das linhas
-    }
-}
-
-FILE *abre_arquivo()
-{
-    FILE *arquivo_mapas = fopen("mapas.txt", "r");
-    if (arquivo_mapas == 0)
-    {
-        fprintf(stderr, "Erro a leitura do mapa\n");
-        exit(EXIT_FAILURE);
-    }
-    fscanf(arquivo_mapas, "%d %d", &mapa1.linhas, &mapa1.colunas);
-    return arquivo_mapas;
-}
+m mapa;
 
 void captura_movimento()
 {
@@ -59,11 +14,11 @@ void captura_movimento()
 
 void localiza_personagem(int *x_axis, int *y_axis)
 {
-    for (int i = 0; i < mapa1.linhas; i++)
+    for (int i = 0; i < mapa.linhas; i++)
     {
-        for (int j = 0; j < mapa1.colunas; j++)
+        for (int j = 0; j < mapa.colunas; j++)
         {
-            if (mapa1.matriz[i][j] == '@')
+            if (mapa.matriz[i][j] == '@')
             {
                 *x_axis = j;
                 *y_axis = i;
@@ -80,7 +35,7 @@ void move_presonagem(char comando)
 
     localiza_personagem(&x_axis, &y_axis);
 
-    mapa1.matriz[y_axis][x_axis] = '.';
+    mapa.matriz[y_axis][x_axis] = '.';
 
     switch (comando)
     {
@@ -100,14 +55,14 @@ void move_presonagem(char comando)
         break;
     }
     // verifica se bateu em uma parede
-    if (mapa1.matriz[y_axis][x_axis] == '-' || mapa1.matriz[y_axis][x_axis] == '|')
+    if (mapa.matriz[y_axis][x_axis] == '-' || mapa.matriz[y_axis][x_axis] == '|')
     {
-        printf("You lost");
+        printf("You lost\n");
         exit(EXIT_SUCCESS);
     }
     else
     {
-        mapa1.matriz[y_axis][x_axis] = '@';
+        mapa.matriz[y_axis][x_axis] = '@';
     }
 }
 
@@ -118,20 +73,20 @@ int acabou()
 
 int main()
 {
-    FILE *arquivo_mapas = abre_arquivo();
+    FILE *arquivo_mapas = abre_arquivo(&mapa);
 
-    aloca_memoria();
+    aloca_memoria(&mapa);
 
-    carrega_mapa(arquivo_mapas);
+    carrega_mapa(arquivo_mapas, &mapa);
 
     do
     {
-        desenha_mapa();
+        desenha_mapa(&mapa);
 
         captura_movimento();
     } while (!acabou());
 
-    libera_memoria();
+    libera_memoria(&mapa);
 
     fclose(arquivo_mapas);
     return 0;

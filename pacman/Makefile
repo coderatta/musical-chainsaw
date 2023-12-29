@@ -2,7 +2,7 @@ CC = clang
 CFLAGS = -Wall -Wextra -g -O0   # Flags for the compiler
 
 # List of source files
-SRCS = pacman.c
+SRCS = pacman.c mapa.c
 
 # Output executable name
 TARGET = pacman
