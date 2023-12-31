@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "pacman.h"
 #include "mapa.h"
 
 m mapa;
-p player;
+c player;
+c ghost1;
 
 void captura_movimento()
 {
@@ -38,20 +40,30 @@ void move_presonagem(char comando)
         break;
     }
 
-    verifica_colisao(new_x_pos, new_y_pos);
+    verifica_colisao(new_x_pos, new_y_pos, PLAYER, &player);
 }
 
-void verifica_colisao(int new_x_pos, int new_y_pos)
+void verifica_colisao(int new_x_pos, int new_y_pos, char character, c *position)
 {
     if (is_obstacle(new_x_pos, new_y_pos))
     {
         return;
     }
+    else if (!is_obstacle(new_x_pos, new_y_pos))
+    {
+        mapa.matriz[new_y_pos][new_x_pos] = character;
+        mapa.matriz[position->y][position->x] = EMPTY_SPACE;
+    }
     else
     {
-        mapa.matriz[new_y_pos][new_x_pos] = PLAYER;
-        mapa.matriz[player.y][player.x] = EMPTY_SPACE;
+        ghost_touched_player();
     }
+}
+
+void ghost_touched_player()
+{
+    printf("Voce perdeu!");
+    exit(EXIT_SUCCESS);
 }
 
 int is_obstacle(int new_x_pos, int new_y_pos)
@@ -59,9 +71,33 @@ int is_obstacle(int new_x_pos, int new_y_pos)
     return mapa.matriz[new_y_pos][new_x_pos] == HORIZONTAL_WALL || mapa.matriz[new_y_pos][new_x_pos] == VERTICAL_WALL;
 }
 
-int acabou()
+void move_fantasmas()
 {
-    return 0;
+    localiza_personagem(&mapa, &ghost1, GHOST1);
+
+    srand(time(NULL));
+    int direcao = rand() % 4;
+
+    int new_x_pos = ghost1.x;
+    int new_y_pos = ghost1.y;
+
+    switch (direcao)
+    {
+    case 0:
+        new_y_pos--;
+        break;
+    case 1:
+        new_y_pos++;
+        break;
+    case 2:
+        new_x_pos--;
+        break;
+    case 3:
+        new_x_pos++;
+        break;
+    }
+
+    verifica_colisao(new_x_pos, new_y_pos, GHOST1, &ghost1);
 }
 
 int main()
@@ -75,9 +111,9 @@ int main()
     do
     {
         desenha_mapa(&mapa);
-
+        move_fantasmas();
         captura_movimento();
-    } while (!acabou());
+    } while (1);
 
     libera_memoria(&mapa);
 

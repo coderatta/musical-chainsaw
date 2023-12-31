@@ -48,7 +48,7 @@ FILE *abre_arquivo(m *mapa)
     return arquivo_mapas;
 }
 
-void localiza_personagem(m *mapa, p *player, char player_symbol)
+void localiza_personagem(m *mapa, c *player, char player_symbol)
 {
     for (int i = 0; i < mapa->linhas; i++)
     {
