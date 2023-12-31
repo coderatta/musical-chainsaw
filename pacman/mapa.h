@@ -1,3 +1,7 @@
+#define EMPTY_SPACE '.'
+#define HORIZONTAL_WALL '-'
+#define VERTICAL_WALL '|'
+
 struct Mapa
 {
     char **matriz;

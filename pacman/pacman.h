@@ -1,5 +1,11 @@
-void captura_movimento();
-void move_presonagem(char comando);
+#define UP 'w'
+#define DOWN 's'
+#define LEFT 'a'
+#define RIGHT 'd'
+#define PLAYER '@'
+
 int acabou();
-void verifica_colisao(int new_x_pos, int new_y_pos);
 int is_obstacle(int new_x_pos, int new_y_pos);
+void verifica_colisao(int new_x_pos, int new_y_pos);
+void move_presonagem(char comando);
+void captura_movimento();

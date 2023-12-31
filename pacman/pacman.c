@@ -15,23 +15,23 @@ void captura_movimento()
 
 void move_presonagem(char comando)
 {
-    localiza_personagem(&mapa, &player, '@');
+    localiza_personagem(&mapa, &player, PLAYER);
 
     int new_x_pos = player.x;
     int new_y_pos = player.y;
 
     switch (comando)
     {
-    case 'w':
+    case UP:
         new_y_pos--;
         break;
-    case 's':
+    case DOWN:
         new_y_pos++;
         break;
-    case 'a':
+    case LEFT:
         new_x_pos--;
         break;
-    case 'd':
+    case RIGHT:
         new_x_pos++;
         break;
     default:
@@ -49,14 +49,14 @@ void verifica_colisao(int new_x_pos, int new_y_pos)
     }
     else
     {
-        mapa.matriz[new_y_pos][new_x_pos] = '@';
-        mapa.matriz[player.y][player.x] = '.';
+        mapa.matriz[new_y_pos][new_x_pos] = PLAYER;
+        mapa.matriz[player.y][player.x] = EMPTY_SPACE;
     }
 }
 
 int is_obstacle(int new_x_pos, int new_y_pos)
 {
-    return mapa.matriz[new_y_pos][new_x_pos] == '-' || mapa.matriz[new_y_pos][new_x_pos] == '|';
+    return mapa.matriz[new_y_pos][new_x_pos] == HORIZONTAL_WALL || mapa.matriz[new_y_pos][new_x_pos] == VERTICAL_WALL;
 }
 
 int acabou()
