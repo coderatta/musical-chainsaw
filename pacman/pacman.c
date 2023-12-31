@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include "pacman.h"
 #include "mapa.h"
 
@@ -10,19 +7,19 @@ c ghost1;
 
 void captura_movimento()
 {
-    char comando;
-    scanf(" %c", &comando);
-    move_presonagem(comando);
+    char command;
+    scanf(" %c", &command);
+    move_player(command);
 }
 
-void move_presonagem(char comando)
+void move_player(char command)
 {
-    localiza_personagem(&mapa, &player, PLAYER);
+    locate_character(&mapa, &player, PLAYER);
 
     int new_x_pos = player.x;
     int new_y_pos = player.y;
 
-    switch (comando)
+    switch (command)
     {
     case UP:
         new_y_pos--;
@@ -40,30 +37,30 @@ void move_presonagem(char comando)
         break;
     }
 
-    verifica_colisao(new_x_pos, new_y_pos, PLAYER, &player);
+    verify_collision(new_x_pos, new_y_pos, PLAYER, &player);
 }
 
-void verifica_colisao(int new_x_pos, int new_y_pos, char character, c *position)
+void verify_collision(int new_x_pos, int new_y_pos, char character, c *position)
 {
     if (is_obstacle(new_x_pos, new_y_pos))
     {
         return;
     }
-    else if (!is_obstacle(new_x_pos, new_y_pos))
+    else if (ghost_touched_player(ghost1, player))
+    {
+        printf("Voce perdeu!\n");
+        exit(EXIT_SUCCESS);
+    }
+    else
     {
         mapa.matriz[new_y_pos][new_x_pos] = character;
         mapa.matriz[position->y][position->x] = EMPTY_SPACE;
     }
-    else
-    {
-        ghost_touched_player();
-    }
 }
 
-void ghost_touched_player()
+int ghost_touched_player(c ghost1, c player)
 {
-    printf("Voce perdeu!");
-    exit(EXIT_SUCCESS);
+    return ghost1.x == player.x && ghost1.y == player.y;
 }
 
 int is_obstacle(int new_x_pos, int new_y_pos)
@@ -71,52 +68,53 @@ int is_obstacle(int new_x_pos, int new_y_pos)
     return mapa.matriz[new_y_pos][new_x_pos] == HORIZONTAL_WALL || mapa.matriz[new_y_pos][new_x_pos] == VERTICAL_WALL;
 }
 
-void move_fantasmas()
+void move_ghost()
 {
-    localiza_personagem(&mapa, &ghost1, GHOST1);
+    locate_character(&mapa, &ghost1, GHOST1);
 
+    char possible_directions[] = {UP, DOWN, LEFT, RIGHT};
     srand(time(NULL));
-    int direcao = rand() % 4;
+    int index = rand() % 4;
 
     int new_x_pos = ghost1.x;
     int new_y_pos = ghost1.y;
 
-    switch (direcao)
+    switch (possible_directions[index])
     {
-    case 0:
+    case UP:
         new_y_pos--;
         break;
-    case 1:
+    case DOWN:
         new_y_pos++;
         break;
-    case 2:
+    case LEFT:
         new_x_pos--;
         break;
-    case 3:
+    case RIGHT:
         new_x_pos++;
         break;
     }
 
-    verifica_colisao(new_x_pos, new_y_pos, GHOST1, &ghost1);
+    verify_collision(new_x_pos, new_y_pos, GHOST1, &ghost1);
 }
 
 int main()
 {
-    FILE *arquivo_mapas = abre_arquivo(&mapa);
+    FILE *map_file = open_file(&mapa);
 
-    aloca_memoria(&mapa);
+    allocate_memory(&mapa);
 
-    carrega_mapa(arquivo_mapas, &mapa);
+    load_map(map_file, &mapa);
 
     do
     {
-        desenha_mapa(&mapa);
-        move_fantasmas();
+        print_map(&mapa);
+        move_ghost();
         captura_movimento();
     } while (1);
 
-    libera_memoria(&mapa);
+    free_memory(&mapa);
 
-    fclose(arquivo_mapas);
+    fclose(map_file);
     return 0;
 }

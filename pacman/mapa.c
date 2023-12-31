@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "mapa.h"
 
-void libera_memoria(m *mapa)
+void free_memory(m *mapa)
 {
     for (int i = 0; i < mapa->linhas; i++)
     {
@@ -11,7 +9,7 @@ void libera_memoria(m *mapa)
     free(mapa->matriz);
 }
 
-void desenha_mapa(m *mapa)
+void print_map(m *mapa)
 {
     for (int i = 0; i < mapa->linhas; i++)
     {
@@ -19,15 +17,15 @@ void desenha_mapa(m *mapa)
     }
 }
 
-void carrega_mapa(FILE *arquivo_mapas, m *mapa)
+void load_map(FILE *map_file, m *mapa)
 {
     for (int i = 0; i < mapa->linhas; i++)
     {
-        fscanf(arquivo_mapas, "%s", mapa->matriz[i]);
+        fscanf(map_file, "%s", mapa->matriz[i]);
     }
 }
 
-void aloca_memoria(m *mapa)
+void allocate_memory(m *mapa)
 {
     mapa->matriz = malloc(sizeof(char *) * mapa->linhas); // aloca ponteiros de char(arrays) para as linhas
     for (int i = 0; i < mapa->linhas; i++)
@@ -36,19 +34,19 @@ void aloca_memoria(m *mapa)
     }
 }
 
-FILE *abre_arquivo(m *mapa)
+FILE *open_file(m *mapa)
 {
-    FILE *arquivo_mapas = fopen("mapas.txt", "r");
-    if (arquivo_mapas == 0)
+    FILE *map_file = fopen("mapas.txt", "r");
+    if (map_file == 0)
     {
         fprintf(stderr, "Erro a leitura do mapa\n");
         exit(EXIT_FAILURE);
     }
-    fscanf(arquivo_mapas, "%d %d", &(mapa->linhas), &(mapa->colunas));
-    return arquivo_mapas;
+    fscanf(map_file, "%d %d", &(mapa->linhas), &(mapa->colunas));
+    return map_file;
 }
 
-void localiza_personagem(m *mapa, c *player, char player_symbol)
+void locate_character(m *mapa, c *player, char player_symbol)
 {
     for (int i = 0; i < mapa->linhas; i++)
     {
